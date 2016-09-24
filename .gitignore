@@ -1,0 +1,14 @@
+## Mac OS
+
+*.DS_Store
+.AppleDouble
+.LSOverride
+
+## Golang
+
+*.o
+*.a
+*.so
+
+.idea
+*.iml
