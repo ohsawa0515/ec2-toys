@@ -6,7 +6,22 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"regexp"
+	"sort"
 )
+
+type ec2_instances []*ec2.Instance
+
+func (instance ec2_instances) Len() int {
+	return len(instance)
+}
+
+func (instance ec2_instances) Swap(i, j int) {
+	instance[i], instance[j] = instance[j], instance[i]
+}
+
+func (instance ec2_instances) Less(i, j int) bool {
+	return GetTagValue(instance[i], "Name") < GetTagValue(instance[j], "Name")
+}
 
 func ParseFilter(filters string) []*ec2.Filter {
 
@@ -44,8 +59,9 @@ func generateSession() (*session.Session, error) {
 	return session.NewSessionWithOptions(session.Options{})
 }
 
-func DescribeInstances(filters string) ([]*ec2.Instance, error) {
+func DescribeInstances(filters string) (ec2_instances, error) {
 
+	var instances ec2_instances
 	sess, err := generateSession()
 	if err != nil {
 		return nil, err
@@ -59,18 +75,18 @@ func DescribeInstances(filters string) ([]*ec2.Instance, error) {
 		return nil, err
 	}
 	if len(resp.Reservations) == 0 {
-		return []*ec2.Instance{}, nil
+		return ec2_instances{}, nil
 	}
-	instances := make([]*ec2.Instance, 0)
 	for _, res := range resp.Reservations {
 		for _, instance := range res.Instances {
 			instances = append(instances, instance)
 		}
 	}
+	sort.Sort(instances)
 	return instances, nil
 }
 
-func PrintInstances(instances []*ec2.Instance) {
+func PrintInstances(instances ec2_instances) {
 	for _, instance := range instances {
 		fmt.Println(
 			GetTagValue(instance, "Name"),
