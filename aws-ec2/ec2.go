@@ -67,8 +67,12 @@ func DescribeInstances(filters string) (ec2_instances, error) {
 		return nil, err
 	}
 	svc := ec2.New(sess)
-	params := &ec2.DescribeInstancesInput{
-		Filters: ParseFilter(filters),
+
+	params := &ec2.DescribeInstancesInput{}
+	if len(filters) != 0 {
+		params = &ec2.DescribeInstancesInput{
+			Filters: ParseFilter(filters),
+		}
 	}
 	resp, err := svc.DescribeInstances(params)
 	if err != nil {
