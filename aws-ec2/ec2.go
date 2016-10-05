@@ -25,7 +25,7 @@ func (instance ec2_instances) Less(i, j int) bool {
 
 func ParseFilter(filters string) []*ec2.Filter {
 
-	// filters e.g. "Name=tag:Vuls-Scan,Values=True Name=instance-type,Values=m1.small,m1.medium"
+	// filters e.g. "Name=tag:Foo,Values=Bar Name=instance-type,Values=m1.small"
 	ec2_filters := make([]*ec2.Filter, 0)
 
 	re_space := regexp.MustCompile(`\s+`)
