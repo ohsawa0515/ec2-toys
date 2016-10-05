@@ -92,13 +92,15 @@ func DescribeInstances(filters string) (ec2_instances, error) {
 
 func PrintInstances(instances ec2_instances) {
 	for _, instance := range instances {
-		fmt.Println(
+		fmt.Printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
 			GetTagValue(instance, "Name"),
-			*instance.PrivateIpAddress,
+			GetPrivateIpAddress(instance),
+			GetPublicIpAddress(instance),
 			*instance.InstanceId,
 			*instance.InstanceType,
 			*instance.Placement.AvailabilityZone,
 			*instance.State.Name,
+			GetPlatform(instance),
 		)
 	}
 }
@@ -110,4 +112,25 @@ func GetTagValue(instance *ec2.Instance, tag_name string) string {
 		}
 	}
 	return ""
+}
+
+func GetPrivateIpAddress(instance *ec2.Instance) string {
+	if instance.PrivateIpAddress != nil {
+		return *instance.PrivateIpAddress
+	}
+	return ""
+}
+
+func GetPublicIpAddress(instance *ec2.Instance) string {
+	if instance.PublicIpAddress != nil {
+		return *instance.PublicIpAddress
+	}
+	return ""
+}
+
+func GetPlatform(instance *ec2.Instance) string {
+	if instance.Platform != nil {
+		return *instance.Platform
+	}
+	return "linux"
 }
