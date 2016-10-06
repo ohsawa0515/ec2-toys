@@ -36,13 +36,6 @@ func ParseFilter(filters string) []*ec2.Filter {
 			if len(j) != 0 {
 				v := re_values.Split(j, -1)
 				name := v[0]
-				/* // fix bug
-				values := make([]*string, 0)
-				for _, k := range v[1:] {
-					fmt.Println(k)
-					values = append(values, aws.String(k))
-				}
-				*/
 				ec2_filters = append(ec2_filters, &ec2.Filter{
 					Name: aws.String(name),
 					Values: []*string{
