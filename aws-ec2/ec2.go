@@ -55,14 +55,22 @@ func ParseFilter(filters string) []*ec2.Filter {
 	return ec2_filters
 }
 
-func generateSession() (*session.Session, error) {
-	return session.NewSessionWithOptions(session.Options{})
+func generateSession(region, profile string) (*session.Session, error) {
+
+	sess_opt := session.Options{}
+	if len(region) != 0 {
+		sess_opt.Config = aws.Config{Region: aws.String(region)}
+	}
+	if len(profile) != 0 {
+		sess_opt.Profile = profile
+	}
+	return session.NewSessionWithOptions(sess_opt)
 }
 
-func DescribeInstances(filters string) (ec2_instances, error) {
+func DescribeInstances(region, profile, filters string) (ec2_instances, error) {
 
 	var instances ec2_instances
-	sess, err := generateSession()
+	sess, err := generateSession(region, profile)
 	if err != nil {
 		return nil, err
 	}

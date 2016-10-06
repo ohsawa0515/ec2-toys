@@ -31,8 +31,7 @@ var commandInit = cli.Command{
 	Name:  "list",
 	Usage: "List EC2 instances.",
 	Action: func(c *cli.Context) error {
-		//fmt.Println(c.String("region"), c.String("profile"), c.String("filters"))
-		instances, err := aws_ec2.DescribeInstances(c.String("filters"))
+		instances, err := aws_ec2.DescribeInstances(c.String("region"), c.String("profile"), c.String("filters"))
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
