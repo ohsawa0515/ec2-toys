@@ -50,7 +50,9 @@ func ParseFilter(filters string) []*ec2.Filter {
 
 func generateSession(region, profile string) (*session.Session, error) {
 
-	sess_opt := session.Options{}
+	sess_opt := session.Options{
+		SharedConfigState: session.SharedConfigEnable,
+	}
 	if len(region) != 0 {
 		sess_opt.Config = aws.Config{Region: aws.String(region)}
 	}
