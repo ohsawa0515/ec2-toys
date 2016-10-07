@@ -9,7 +9,6 @@ import (
 var BaseFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:  "region, r",
-		Value: "us-east-1",
 		Usage: "The region to use. Overrides config/env settings.",
 	},
 	cli.StringFlag{
