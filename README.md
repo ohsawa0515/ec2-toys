@@ -1,4 +1,4 @@
-# ec2-toys
+ec2-toys
 ===
 
 Useful cli tools for Amazon EC2.
@@ -123,13 +123,11 @@ e.g.
 
 ```
 # If you have the following settings,
-
 [dev]
 aws_access_key_id = <YOUR_ACCESS_KEY_ID>
 aws_secret_access_key = <YOUR_SECRET_ACCESS_KEY>
 
-You use profile dev.
-
+# You use profile dev.
 $ ec2-toys list --profile dev
 ```
 
