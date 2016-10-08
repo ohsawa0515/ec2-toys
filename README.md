@@ -3,6 +3,24 @@ ec2-toys
 
 Useful cli tools for Amazon EC2.
 
+* [How to install and settings](#how-to-install-and-settings)
+  * [1\. Installation](#1-installation)
+  * [2\. Set AWS credentials](#2-set-aws-credentials)
+  * [3\. Set AWS region](#3-set-aws-region)
+* [Usage](#usage)
+  * [Run](#run)
+* [Options](#options)
+  * [Global](#global)
+    * [\-\-region (\-r)](#--region--r)
+    * [\-\-profile (\-p)](#--profile--p)
+  * [List](#list)
+    * [\-\-filters (\-f)](#--filters--f)
+* [Combination example of the peco command](#combination-example-of-the-peco-command)
+  * [SSH public EC2 instance\.](#ssh-public-ec2-instance)
+  * [Via bastion server\.](#via-bastion-server)
+* [Contribution](#contribution)
+* [License](#license)
+
 ## How to install and settings
 
 ### 1. Installation
