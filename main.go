@@ -1,9 +1,10 @@
 package main
 
 import (
+	"os"
+
 	"github.com/ohsawa0515/ec2-toys/aws-ec2"
 	"gopkg.in/urfave/cli.v1"
-	"os"
 )
 
 var BaseFlags = []cli.Flag{

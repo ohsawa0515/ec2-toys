@@ -2,11 +2,12 @@ package aws_ec2
 
 import (
 	"fmt"
+	"regexp"
+	"sort"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
-	"regexp"
-	"sort"
 )
 
 type ec2_instances []*ec2.Instance
