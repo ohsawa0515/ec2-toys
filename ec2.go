@@ -1,4 +1,4 @@
-package aws_ec2
+package main
 
 import (
 	"fmt"
@@ -10,34 +10,36 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
-type ec2_instances []*ec2.Instance
+// Ec2Instances is list of EC2 instance.
+type Ec2Instances []*ec2.Instance
 
-func (instance ec2_instances) Len() int {
+func (instance Ec2Instances) Len() int {
 	return len(instance)
 }
 
-func (instance ec2_instances) Swap(i, j int) {
+func (instance Ec2Instances) Swap(i, j int) {
 	instance[i], instance[j] = instance[j], instance[i]
 }
 
-func (instance ec2_instances) Less(i, j int) bool {
+func (instance Ec2Instances) Less(i, j int) bool {
 	return GetTagValue(instance[i], "Name") < GetTagValue(instance[j], "Name")
 }
 
+// ParseFilter parse filter option.
 func ParseFilter(filters string) []*ec2.Filter {
 
 	// filters e.g. "Name=tag:Foo,Values=Bar Name=instance-type,Values=m1.small"
-	ec2_filters := make([]*ec2.Filter, 0)
+	var ec2Filter []*ec2.Filter
 
-	re_space := regexp.MustCompile(`\s+`)
-	re_name := regexp.MustCompile(`Name=`)
-	re_values := regexp.MustCompile(`,Values=`)
-	for _, i := range re_space.Split(filters, -1) {
-		for _, j := range re_name.Split(i, -1) {
+	reSpace := regexp.MustCompile(`\s+`)
+	reName := regexp.MustCompile(`Name=`)
+	reValue := regexp.MustCompile(`,Values=`)
+	for _, i := range reSpace.Split(filters, -1) {
+		for _, j := range reName.Split(i, -1) {
 			if len(j) != 0 {
-				v := re_values.Split(j, -1)
+				v := reValue.Split(j, -1)
 				name := v[0]
-				ec2_filters = append(ec2_filters, &ec2.Filter{
+				ec2Filter = append(ec2Filter, &ec2.Filter{
 					Name: aws.String(name),
 					Values: []*string{
 						aws.String(v[1]),
@@ -46,26 +48,27 @@ func ParseFilter(filters string) []*ec2.Filter {
 			}
 		}
 	}
-	return ec2_filters
+	return ec2Filter
 }
 
 func generateSession(region, profile string) (*session.Session, error) {
 
-	sess_opt := session.Options{
+	sessOpt := session.Options{
 		SharedConfigState: session.SharedConfigEnable,
 	}
 	if len(region) != 0 {
-		sess_opt.Config = aws.Config{Region: aws.String(region)}
+		sessOpt.Config = aws.Config{Region: aws.String(region)}
 	}
 	if len(profile) != 0 {
-		sess_opt.Profile = profile
+		sessOpt.Profile = profile
 	}
-	return session.NewSessionWithOptions(sess_opt)
+	return session.NewSessionWithOptions(sessOpt)
 }
 
-func DescribeInstances(region, profile, filters string) (ec2_instances, error) {
+// DescribeInstances describe one or more of your instances.
+func DescribeInstances(region, profile, filters string) (Ec2Instances, error) {
 
-	var instances ec2_instances
+	var instances Ec2Instances
 	sess, err := generateSession(region, profile)
 	if err != nil {
 		return nil, err
@@ -83,7 +86,7 @@ func DescribeInstances(region, profile, filters string) (ec2_instances, error) {
 		return nil, err
 	}
 	if len(resp.Reservations) == 0 {
-		return ec2_instances{}, nil
+		return Ec2Instances{}, nil
 	}
 	for _, res := range resp.Reservations {
 		for _, instance := range res.Instances {
@@ -94,12 +97,13 @@ func DescribeInstances(region, profile, filters string) (ec2_instances, error) {
 	return instances, nil
 }
 
-func PrintInstances(instances ec2_instances) {
+// PrintInstances is output stdout.
+func PrintInstances(instances Ec2Instances) {
 	for _, instance := range instances {
 		fmt.Printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
 			GetTagValue(instance, "Name"),
-			GetPrivateIpAddress(instance),
-			GetPublicIpAddress(instance),
+			GetPrivateIPAddress(instance),
+			GetPublicIPAddress(instance),
 			*instance.InstanceId,
 			*instance.InstanceType,
 			*instance.Placement.AvailabilityZone,
@@ -109,29 +113,33 @@ func PrintInstances(instances ec2_instances) {
 	}
 }
 
-func GetTagValue(instance *ec2.Instance, tag_name string) string {
+// GetTagValue returns values of EC2 tag.
+func GetTagValue(instance *ec2.Instance, tagName string) string {
 	for _, t := range instance.Tags {
-		if *t.Key == tag_name {
+		if *t.Key == tagName {
 			return *t.Value
 		}
 	}
 	return ""
 }
 
-func GetPrivateIpAddress(instance *ec2.Instance) string {
+// GetPrivateIPAddress returns value of EC2 private ip address, if there is a value.
+func GetPrivateIPAddress(instance *ec2.Instance) string {
 	if instance.PrivateIpAddress != nil {
 		return *instance.PrivateIpAddress
 	}
 	return ""
 }
 
-func GetPublicIpAddress(instance *ec2.Instance) string {
+// GetPublicIPAddress returns value of EC2 public ip address, if there is a value.
+func GetPublicIPAddress(instance *ec2.Instance) string {
 	if instance.PublicIpAddress != nil {
 		return *instance.PublicIpAddress
 	}
 	return ""
 }
 
+// GetPlatform returns platform name(linux or windows).
 func GetPlatform(instance *ec2.Instance) string {
 	if instance.Platform != nil {
 		return *instance.Platform

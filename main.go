@@ -3,10 +3,10 @@ package main
 import (
 	"os"
 
-	"github.com/ohsawa0515/ec2-toys/aws-ec2"
 	"gopkg.in/urfave/cli.v1"
 )
 
+// BaseFlags base on commands
 var BaseFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:  "region, r",
@@ -18,6 +18,7 @@ var BaseFlags = []cli.Flag{
 	},
 }
 
+// Commands lists
 var Commands = []cli.Command{
 	commandInit,
 }
@@ -31,11 +32,11 @@ var commandInit = cli.Command{
 	Name:  "list",
 	Usage: "List EC2 instances.",
 	Action: func(c *cli.Context) error {
-		instances, err := aws_ec2.DescribeInstances(c.String("region"), c.String("profile"), c.String("filters"))
+		instances, err := DescribeInstances(c.String("region"), c.String("profile"), c.String("filters"))
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
-		aws_ec2.PrintInstances(instances)
+		PrintInstances(instances)
 		return nil
 	},
 	Flags: flagsInit,
