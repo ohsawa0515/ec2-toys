@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"regexp"
 	"sort"
 	"strings"
+	"text/tabwriter"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -93,8 +95,10 @@ func DescribeInstances(region, profile, filters string) (Ec2Instances, error) {
 
 // PrintInstances is output stdout.
 func PrintInstances(instances Ec2Instances) {
+	w := new(tabwriter.Writer)
+	w.Init(os.Stdout, 2, 8, 2, ' ', 0)
 	for _, instance := range instances {
-		fmt.Printf("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
+		fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n",
 			GetTagValue(instance, "Name"),
 			GetPrivateIPAddress(instance),
 			GetPublicIPAddress(instance),
@@ -105,6 +109,7 @@ func PrintInstances(instances Ec2Instances) {
 			GetPlatform(instance),
 		)
 	}
+	w.Flush()
 }
 
 // GetTagValue returns values of EC2 tag.
