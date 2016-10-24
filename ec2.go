@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"sort"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -31,22 +32,15 @@ func ParseFilter(filters string) []*ec2.Filter {
 	// filters e.g. "Name=tag:Foo,Values=Bar Name=instance-type,Values=m1.small"
 	var ec2Filter []*ec2.Filter
 
-	reSpace := regexp.MustCompile(`\s+`)
-	reName := regexp.MustCompile(`Name=`)
-	reValue := regexp.MustCompile(`,Values=`)
-	for _, i := range reSpace.Split(filters, -1) {
-		for _, j := range reName.Split(i, -1) {
-			if len(j) != 0 {
-				v := reValue.Split(j, -1)
-				name := v[0]
-				ec2Filter = append(ec2Filter, &ec2.Filter{
-					Name: aws.String(name),
-					Values: []*string{
-						aws.String(v[1]),
-					},
-				})
-			}
-		}
+	re := regexp.MustCompile(`Name=(.+),Values=(.+)`)
+	for _, i := range strings.Fields(filters) {
+		matches := re.FindAllStringSubmatch(i, -1)
+		ec2Filter = append(ec2Filter, &ec2.Filter{
+			Name: aws.String(matches[0][1]),
+			Values: []*string{
+				aws.String(matches[0][2]),
+			},
+		})
 	}
 	return ec2Filter
 }
