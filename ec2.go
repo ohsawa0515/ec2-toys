@@ -11,7 +11,25 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go/service/ec2/ec2iface"
 )
+
+// EC2Client -
+type EC2Client interface {
+	ListInstances(string) (Ec2Instances, error)
+}
+
+// ec2Client -
+type ec2Client struct {
+	client ec2iface.EC2API
+}
+
+// NewEC2Client is construct of ec2 object.
+func NewEC2Client(svc ec2iface.EC2API) EC2Client {
+	return &ec2Client{
+		client: svc,
+	}
+}
 
 // Ec2Instances is list of EC2 instance.
 type Ec2Instances []*ec2.Instance
@@ -47,7 +65,8 @@ func ParseFilter(filters string) []*ec2.Filter {
 	return ec2Filter
 }
 
-func generateSession(region, profile string) (*session.Session, error) {
+// GenerateSession generate session.
+func GenerateSession(region, profile string) (*session.Session, error) {
 
 	sessOpt := session.Options{
 		SharedConfigState: session.SharedConfigEnable,
@@ -61,23 +80,17 @@ func generateSession(region, profile string) (*session.Session, error) {
 	return session.NewSessionWithOptions(sessOpt)
 }
 
-// DescribeInstances describe one or more of your instances.
-func DescribeInstances(region, profile, filters string) (Ec2Instances, error) {
+// ListInstances lists one or more of your instances.
+func (svc *ec2Client) ListInstances(filters string) (Ec2Instances, error) {
 
 	var instances Ec2Instances
-	sess, err := generateSession(region, profile)
-	if err != nil {
-		return nil, err
-	}
-	svc := ec2.New(sess)
-
 	params := &ec2.DescribeInstancesInput{}
 	if len(filters) != 0 {
 		params = &ec2.DescribeInstancesInput{
 			Filters: ParseFilter(filters),
 		}
 	}
-	resp, err := svc.DescribeInstances(params)
+	resp, err := svc.client.DescribeInstances(params)
 	if err != nil {
 		return nil, err
 	}

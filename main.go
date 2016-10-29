@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"github.com/aws/aws-sdk-go/service/ec2"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -32,7 +33,12 @@ var commandInit = cli.Command{
 	Name:  "list",
 	Usage: "List EC2 instances.",
 	Action: func(c *cli.Context) error {
-		instances, err := DescribeInstances(c.String("region"), c.String("profile"), c.String("filters"))
+		sess, err := GenerateSession(c.String("region"), c.String("profile"))
+		if err != nil {
+			return cli.NewExitError(err.Error(), 1)
+		}
+		ec2Client := NewEC2Client(ec2.New(sess))
+		instances, err := ec2Client.ListInstances(c.String("filters"))
 		if err != nil {
 			return cli.NewExitError(err.Error(), 1)
 		}
