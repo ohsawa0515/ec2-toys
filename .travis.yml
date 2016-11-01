@@ -1,0 +1,23 @@
+language: go
+sudo: false
+
+os:
+  - linux
+  - osx
+
+go:
+  - 1.6
+  - 1.7
+
+script:
+  - go test -v
+
+before_install:
+  - go get github.com/axw/gocov/gocov
+  - go get github.com/mattn/goveralls
+  - go get golang.org/x/tools/cmd/cover
+
+notifications:
+  email: false
+  slack:
+    secure: "bEXRqpUdwi9Ydy6D0fyyV2YdV2CBYw+vGd7dwj3obHVirpo/s7aiCnBtH7nKgfajiixW0GNMHU0DqxeFGfw3RDefXm02fP7PFxemz4FXKYeCQBZdy/l/WJc0jc75jhxMh33DwR9rsgNneZRsedfWnEeyNucZzFBwLzVaVmxreH1iYLsEb0q8rL6/DLo9fjMGD0H++OPMOoyScBC//WBgmlGaUquQdkwTjA296wUBhrR6qz3zRseSbzfD2si8dGgmZKnFMSYLzWDyEi6woBd8QFt9RNIE05C9RsN6yba3ODvPGN89IvK9JuaauYSErkgfKRF5wbe8CWlBsMUac7SJcxLFj1+C2+CWbbvuZeJUSdotl0h8xR2Gy1hvWipdhOWWGwpjiKK2Q8ZN55PAC3YHU20VVz82pIRdBEvOnTkMAab8OeOWbkmTT9f8kYL9wFjP0qJYGEYoBK67boihd2yVJ2nWIt6od4cAj9B1gxx1WmEgoAC4j3sR2o2D4bzDbbWfMlaVSJA9RoHUE/3MfSbpzgKVFCiRxtg6YHjZdF1pvFdMMTtWfjiS5EVlnwOIz25J4DhpvMGhZGDLLTA0dvn4H1qJXam1rkw7ni4JNA2MFcBDwpLa6gUD7uU9vnk45W7rQOuuF2v3ZCf7/PObdgoYvY6thamXqMJ41kKYxnu4KRY="
