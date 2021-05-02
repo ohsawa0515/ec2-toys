@@ -54,7 +54,7 @@ func main() {
 	app.Usage = "Useful cli to operation Amazon EC2."
 	app.Author = "Shuichi Ohsawa"
 	app.Email = "ohsawa0515@gmail.com"
-	app.Version = "0.0.1"
+	app.Version = Version
 	app.Flags = BaseFlags
 	app.Commands = Commands
 	app.Run(os.Args)
