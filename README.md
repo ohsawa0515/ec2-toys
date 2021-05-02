@@ -1,7 +1,8 @@
-[![Build Status](https://travis-ci.org/ohsawa0515/ec2-toys.svg?branch=master)](https://travis-ci.org/ohsawa0515/ec2-toys) 
-
 ec2-toys
 ===
+
+![Test Status](https://github.com/ohsawa0515/ec2-toys/actions/workflows/test.yml/badge.svg)
+
 
 Useful cli tools for Amazon EC2.
 
