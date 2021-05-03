@@ -1,7 +1,8 @@
-![Test Status](https://github.com/ohsawa0515/ec2-toys/actions/workflows/test.yml/badge.svg) 
-
 ec2-toys
 ===
+
+![Test Status](https://github.com/ohsawa0515/ec2-toys/actions/workflows/test.yml/badge.svg)
+
 
 Useful cli tools for Amazon EC2.
 
